@@ -5,6 +5,7 @@
 </p>
 
 <h1 align="center">📕 Hermes 小红书 Workflow</h1>
+
 <p align="center">
   <i>AI-powered end-to-end content pipeline for Xiaohongshu (小红书 / RED)<br>
   AI 驱动的小红书内容生产线 — 从灵感到待发布，全流程自动化</i>
@@ -254,3 +255,4 @@ MIT · See [LICENSE](./LICENSE)
 <p align="center">
   <sub>Built with <a href="https://hermes-agent.nousresearch.com/">Hermes Agent</a> · For creators who care about quality</sub>
 </p>
+
