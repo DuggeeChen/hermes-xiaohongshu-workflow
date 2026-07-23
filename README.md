@@ -49,7 +49,7 @@
 |------|--------|----------|
 | 🔍 **选题探索** | 这个话题值不值得写？有什么切入角度？ | 敏感选题需 ≥2 个独立来源核验 |
 | ✍️ **内容生产** | 标题 ≤20 字、正文 ≤1000 字、互动引导、标签 | 写入前 6 项硬性复查清单 |
-| 🎨 **配图方案** | 多图布局、视觉风格、AI 生图提示词 | 4 项反偷懒质检 |
+| 🎨 **配图方案** | 多图布局、自适应视觉方向、AI 生图提示词 | 5 项质量检查 |
 
 大多数 AI 工具只做到「帮你写一段」，本工作流把**三个阶段串联**，每一步都有关卡。
 
@@ -75,7 +75,7 @@
   │  趋势分析         │ ─→ │  事实核验              │ ─→ │  规划图片结构     │
   │  角度挖掘         │    │  标题 + 正文 + 标签    │    │  AI 提示词        │
   │                  │    │                      │    │                  │
-  │  只读，输出到终端  │    │  灵感池  →  待配图      │    │  待配图  →  待发布  │
+  │  只读，输出到终端  │    │  灵感池  →  待配图      │    │  待配图（写入方案）    │
   └──────────────────┘    └──────────────────────┘    └──────────────────┘
 ```
 
@@ -118,8 +118,8 @@ cp -r skills/* ~/AppData/Local/hermes/skills/productivity/
 | 状态 | 说明 | 谁来执行 |
 |------|------|---------|
 | 灵感池 | 只有选题，尚未生成内容 | 用户或 topic-research |
-| 待配图 | 内容已完成，需要配图方案 | content-production 自动推进 |
-| 待发布 | 配图方案已完成，可人工复审发布 | image-planning 自动推进 |
+| 待配图 | 内容已完成，待配图；配图方案写入后状态不变 | content-production 自动推进 |
+| 待发布 | 人工复审通过，准备发布 | 用户手动 |
 | 已发布 | 发布完成，待填写数据表现 | 用户手动 |
 
 <br>
@@ -161,7 +161,7 @@ cp -r skills/* ~/AppData/Local/hermes/skills/productivity/
 - 抓取站内数据
 - 填写发布后数据（点赞、收藏等）
 
-工作流终点是 **「待发布」** — 人工最终审核是刻意保留的设计。
+工作流终点是 **「待发布」** — 配图方案写入后状态不变，人工最终审核是刻意保留的设计。
 
 <br>
 
@@ -193,9 +193,9 @@ cp -r skills/* ~/AppData/Local/hermes/skills/productivity/
 |------|------|
 | **触发词** | 「完成待发布」「配图」「出图」 |
 | **输入** | Notion 中「待配图」状态的笔记（自动取最新） |
-| **输出** | 多图布局方案：每页作用、展示文案、构图建议、AI 生图提示词 |
-| **模式** | A·氛围引导型（观点/情绪，留白大） vs B·信息结构型（干货/清单，编号+色块） |
-| **写 Notion?** | ✅ 写入「配图方案」字段，状态设为「待发布」 |
+| **输出** | Session Prompt + 逐页 Page Prompts，自适应视觉方向 |
+| **模式** | 视觉方向由内容决定，不预设账号配色或固定风格 |
+| **写 Notion?** | ✅ 写入「配图方案」字段，状态保持不变 |
 
 <br>
 
@@ -241,7 +241,7 @@ Writing a good Xiaohongshu post is a **multi-stage pipeline**, not a single "gen
 |-------|-------------|--------------|
 | 🔍 **Research** | Is this topic worth writing? What angles are trending? | Multi-source verification for sensitive claims |
 | ✍️ **Drafting** | Title ≤20 chars, body ≤1000 chars, CTAs, tags | 6-item pre-write review checklist |
-| 🎨 **Image Planning** | Multi-image layouts, visual style, AI prompts | 4-item anti-laziness quality audit |
+| 🎨 **Image Planning** | Multi-image layouts, adaptive visual direction, AI prompts | 5-item quality check |
 
 Most AI tools stop at "generate a post." This workflow **connects all three stages** through a Notion database with built-in quality gates.
 
@@ -267,7 +267,7 @@ Most AI tools stop at "generate a post." This workflow **connects all three stag
   │  Trend analysis  │  ───→ │  Fact-checking       │  ───→ │  Plan layouts    │
   │  Angle discovery │       │  Title + body + tags │       │  AI prompts      │
   │                  │       │                      │       │                  │
-  │  Read-only       │       │  灵感池  →  待配图     │       │  待配图  →  待发布  │
+  │  Read-only       │       │  灵感池  →  待配图     │       │  待配图（写入方案）    │
   └──────────────────┘       └──────────────────────┘       └──────────────────┘
 ```
 
@@ -310,8 +310,8 @@ Each post moves through four states in Notion:
 | State | Description | Who advances it |
 |-------|-------------|----------------|
 | 灵感池 (Idea Pool) | Topic only, no content yet | User or topic-research |
-| 待配图 (Ready for Images) | Content complete, needs image plan | content-production auto-advances |
-| 待发布 (Ready to Publish) | Image plan complete, human review ready | image-planning auto-advances |
+| 待配图 (Ready for Images) | Content complete, awaiting images; status unchanged after image plan written | content-production auto-advances |
+| 待发布 (Ready to Publish) | Human review passed, ready to publish | User manually |
 | 已发布 (Published) | Published, awaiting analytics | User manually |
 
 <br>
@@ -353,7 +353,7 @@ Each post moves through four states in Notion:
 - Scrape platform data
 - Fill post-publication analytics
 
-The pipeline stops at **"待发布 (Ready to Publish)"** — manual final review is by design.
+The pipeline stops at **"待发布 (Ready to Publish)"** — image plans are written without advancing status; manual final review is by design.
 
 <br>
 
@@ -386,8 +386,8 @@ The pipeline stops at **"待发布 (Ready to Publish)"** — manual final review
 | **Triggers** | "Finish ready to publish", "Image plan", "Generate images" |
 | **Input** | Post with status 待配图 in Notion (auto-picks latest) |
 | **Output** | Multi-image layout: per-page role, copy, composition, AI generation prompt |
-| **Modes** | A: Atmosphere-driven (opinion/emotion, heavy whitespace) vs B: Info-dense (tutorial/checklist, numbered + color blocks) |
-| **Writes Notion?** | ✅ Writes to 配图方案 field, sets status to 待发布 |
+| **Modes** | Visual direction is adaptive and content-driven — no preset account color palettes or fixed styles |
+| **Writes Notion?** | ✅ Writes to 配图方案 field, status remains unchanged |
 
 <br>
 

@@ -18,7 +18,7 @@ USER INPUT                 SKILL                      NOTION STATE           OUT
 "写一篇：干货教程，        content-production  ──→  灵感池 → 待配图      ──→  Full post in
  《用 AI 写周报的 3 个坑》"       │                                      Notion
                               ▼
-"完成待发布"        ──→  image-planning     ──→  待配图 → 待发布      ──→  Image briefs
+"完成待发布"        ──→  image-planning     ──→  待配图（写入方案）      ──→  Image briefs
                                                                           in Notion
 ```
 
@@ -129,46 +129,52 @@ Within these constraints, the AI agent decides:
 
 1. Finds the target post (by topic/title, or auto-picks latest `待配图`)
 2. Reads: topic, title, body, content type
-3. Analyzes content structure and visual rhythm
-4. Plans image count (usually 4–6, flexible based on content)
-5. Designs visual direction (color palette, mood, consistency anchor)
-6. Generates AI image-generation prompts for each page
-7. Runs an **anti-laziness quality checklist** (4 items)
+3. Analyzes content structure and core proposition
+4. Plans image count (flexible, content-driven, usually 4–6)
+5. Independently designs adaptive visual direction (no preset account color palettes)
+6. Compiles prompts: Session Prompt + lean per-page Page Prompts
+7. Runs a **quality check** (5 items)
 8. Writes the full plan to Notion's `配图方案` field
-9. Advances status: `待配图` → `待发布`
+9. Status remains unchanged (no auto-advance to `待发布`)
 
-### Two density modes
+### Adaptive visual direction
 
-The skill chooses between two modes per page (can mix within one post):
+Visual direction is now content-driven rather than preset by account pillars. The skill independently decides:
 
-| Mode | Best for | Characteristics |
-|------|----------|----------------|
-| **A: Atmosphere-driven** | Opinions, emotions, suspense, transition pages | Big concept per page, heavy whitespace, mood-driven |
-| **B: Information-dense** | Tutorials, checklists, step-by-step, comparisons | Numbered lists, icon+label, color-blocked sections, 50–80 chars/page |
+- Visual language: photography, illustration, collage, editorial design, conceptual, infographic, or mixed
+- Color system, materials/textures, lighting, spatial mood
+- Graphic language, typographic character, visual metaphors, page rhythm
+
+Once a visual system is chosen for a post, subsequent pages maintain consistency — but no two pages mechanically copy the same composition.
+
+### Prompt architecture
+
+Two-layer output:
+- **Session Prompt** (sent once) — theme, proposition, desired reader response, page sequence overview, visual direction, global rules, constraint priorities, creative mandate
+- **Page Prompts** (one per page) — only page-specific info: task, exact text, visual intent, special constraints (if any). No repeated global rules.
+
+Constraint priorities (4 tiers, in Session Prompt only):
+1. Specified text and factual accuracy
+2. Clear page-level core message
+3. Visual consistency across pages + mobile readability
+4. Creative, aesthetic, and decorative details
+
+### Quality check (before writing to Notion)
+
+1. Is each page from the current post and serving an independent, necessary role?
+2. Is there progressive relationship between pages, with no information duplication?
+3. Is each page's specified text clear, accurate, and reasonable in quantity?
+4. Is the visual system consistent while avoiding mechanical composition copy?
+5. Is the final Prompt concise, directly usable, and leaving adequate creative space?
+
+Three fatal issues (re-compress Prompt if found):
+- Prompt reads like a design spec checklist, not a creative brief
+- Prompt lists elements without explaining what the page should convey
+- Rules are so dense that ChatGPT has almost no visual decision space
 
 ### Prompt writing for AI image tools
 
-Prompts are written in natural Chinese for tools like ChatGPT Images 2.0:
-
-- Use everyday Chinese, photography terms, design language
-- Enclose image text in `「」` with "逐字准确" (verbatim)
-- Add "不要其他文字、不要英文" (no extra text, no English)
-- Specify layout intent (centered, two-row, left-aligned) but accept approximate rendering
-
-### Account visual system (3 content pillars)
-
-| Pillar | Mood | Visual Direction |
-|--------|------|-----------------|
-| 工作流方法类 (Workflow/Methods) | Calm, professional | Deep blue-grey, cool white |
-| 去味手艺类 (Craft/Handmade) | Warm, artisanal | Cream white, charcoal, coral orange |
-| 观点态度类 (Opinion/Attitude) | Sharp, contrasting | Deep blue-grey, warm yellow |
-
-### Anti-laziness checklist (before writing to Notion)
-
-- [ ] Is each page's copy derived from **this post's specific content**? (Not a generic template)
-- [ ] Across all pages, is there **information progression**? (Not restating the same point)
-- [ ] For tutorial/checklist/process posts, are **specific points on the image**? (Not just a title)
-- [ ] Is each prompt **genuinely different**? (Not copy-paste with swapped text)
+Same as before — prompts in natural Chinese for ChatGPT Images 2.0, using `「」` for verbatim text, specifying layout intent while accepting approximate rendering.
 
 ### Trigger examples
 
@@ -266,7 +272,7 @@ hermes skills load xiaohongshu-image-planning
 "写一篇：干货教程，        content-production  ──→  灵感池 → 待配图     ──→  完整笔记
  《用 AI 写周报的 3 个坑》"       │                                    写入 Notion
                               ▼
-"完成待发布"        ──→  image-planning     ──→  待配图 → 待发布     ──→  配图方案
+"完成待发布"        ──→  image-planning     ──→  待配图（写入方案）     ──→  配图方案
                                                                         写入 Notion
 ```
 
@@ -336,18 +342,19 @@ hermes skills load xiaohongshu-image-planning
 **Skill**: `xiaohongshu-image-planning`
 **Notion**: 读取笔记内容，写入配图方案
 
-### 两种信息密度模式
+### 自适应视觉方向
 
-同一篇笔记内可按需混用：
+视觉方向由内容决定，不再按账号预设配色。Agent 自主选择摄影、插画、拼贴、编辑设计、概念视觉、信息图形或混合风格，以及色彩、材质、光线、图形语言等。一旦确定整组视觉系统，后续页面保持一致但不机械复制。
 
-| 模式 | 适合 | 特征 |
-|------|------|------|
-| **A: 氛围引导型** | 观点、情绪、悬念、过渡页 | 单页金句/概念，大留白，情绪驱动 |
-| **B: 信息结构型** | 教程、清单、步骤、对比 | 编号列表、图标+标签、色块分区，单页 50–80 字 |
+### Prompt 架构
 
-### 反偷懒质检清单
+两层输出：
+- **Session Prompt**（发送一次）— 主题、核心命题、读者目标反应、页面序列概览、视觉方向、全局规则、约束优先级、创作授权
+- **Page Prompts**（每页一个）— 仅当前页面信息：任务、准确文字、视觉意图、特殊约束（如有）。不重复全局规则。
 
-写入前逐页自查 4 项（详见上方英文版）。
+### 质量检查
+
+写入前检查 5 项：内容来源、信息递进、文字准确性、视觉一致性、Prompt 简洁度。详见上方英文版。
 
 ---
 
