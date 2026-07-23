@@ -97,11 +97,50 @@ cp -r skills/* ~/AppData/Local/hermes/skills/productivity/
 
 <br>
 
+### 🔄 状态流转
+
+每篇笔记在 Notion 中经历四个状态：
+
+```
+灵感池 → 待配图 → 待发布 → 已发布
+```
+
+| 状态 | 说明 | 谁来执行 |
+|------|------|---------|
+| 灵感池 | 只有选题，尚未生成内容 | 用户或 topic-research |
+| 待配图 | 内容已完成，需要配图方案 | content-production 自动推进 |
+| 待发布 | 配图方案已完成，可人工复审发布 | image-planning 自动推进 |
+| 已发布 | 发布完成，待填写数据表现 | 用户手动 |
+
+<br>
+
 ### 💡 设计理念
 
 | 🛡️ | **编辑守门员，不是模具** — 约束「不能做什么」比「怎么做」更重要：不编造数据、不套模板CTA、不覆盖已有内容 |
 |🎨| **边界内自由创作** — Agent 自主决定风格、结构、节奏、图片数量 |
 | 🔍 | **信任但核验** — 涉及政策、算法、数据的敏感选题，必须多来源交叉验证 |
+
+<br>
+
+### 🛠️ 技术栈
+
+| 层级 | 工具 / 平台 | 作用 |
+|------|-----------|------|
+| AI Agent | [Hermes Agent](https://hermes-agent.nousresearch.com/) | 运行时引擎，加载并执行 Skill |
+| 数据库 | Notion + MCP | 内容管理、状态追踪、多字段记录 |
+| 搜索 | DuckDuckGo / ddgs | 选题研究、事实核验 |
+| 图片生成 | ChatGPT Images 2.0 | 根据配图方案生成实际图片 |
+
+<br>
+
+### ❌ 错误处理
+
+| 场景 | 处理方式 |
+|------|--------|
+| 找不到 Notion 数据库 | 立即停止，提示检查连接和 Token |
+| 选题已存在且有内容 | 不覆盖，返回已有记录链接 |
+| 无法核验敏感事实 | 停止并标注「需人工确认」，不猜测 |
+| 写入成功但状态更新失败 | 告知内容已保存，状态需手动更新 |
 
 <br>
 
@@ -206,11 +245,50 @@ cp -r skills/* ~/AppData/Local/hermes/skills/productivity/
 
 <br>
 
+### 🔄 State Machine
+
+Each post moves through four states in Notion:
+
+```
+灵感池 → 待配图 → 待发布 → 已发布
+```
+
+| State | Description | Who advances it |
+|-------|-------------|----------------|
+| 灵感池 (Idea Pool) | Topic only, no content yet | User or topic-research |
+| 待配图 (Ready for Images) | Content complete, needs image plan | content-production auto-advances |
+| 待发布 (Ready to Publish) | Image plan complete, human review ready | image-planning auto-advances |
+| 已发布 (Published) | Published, awaiting analytics | User manually |
+
+<br>
+
 ### 💡 Design Philosophy
 
 | 🛡️ | **Gatekeeper, not mold** — Enforces what *not* to do: no fake data, no template CTAs, no overwriting existing content |
 |🎨| **Freedom within guardrails** — Agent decides style, structure, pacing within hard boundaries |
 | 🔍 | **Trust but verify** — Sensitive claims require ≥2 independent sources before proceeding |
+
+<br>
+
+### 🛠️ Tech Stack
+
+| Layer | Tool / Platform | Role |
+|-------|-----------------|------|
+| AI Agent | [Hermes Agent](https://hermes-agent.nousresearch.com/) | Runtime engine — loads and executes skills |
+| Database | Notion + MCP | Content management, state tracking, multi-field records |
+| Search | DuckDuckGo / ddgs | Topic research and fact-checking |
+| Image Gen | ChatGPT Images 2.0 | Generates actual images from image briefs |
+
+<br>
+
+### ❌ Error Handling
+
+| Scenario | Behavior |
+|----------|----------|
+| Notion database not found | Stop immediately, prompt to check connection and token |
+| Topic exists with content | Do not overwrite; return link to existing record |
+| Unverifiable sensitive fact | Stop and flag "needs human review"; no guessing |
+| Write succeeded but status update failed | Inform user content is saved; status needs manual update |
 
 <br>
 
