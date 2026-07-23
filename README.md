@@ -12,7 +12,24 @@
 
 <br>
 
-<!-- ══════════════════════════  LANGUAGE PANELS  ══════════════════════════ -->
+<table align="center"><tr>
+<td align="center" width="260">
+
+[**🇬🇧 &nbsp;English**](#english)
+
+</td>
+<td align="center" width="260">
+
+[**🇨🇳 &nbsp;中文**](#chinese)
+
+</td>
+</tr></table>
+
+<br>
+
+---
+
+<div id="english">
 
 <details open>
 <summary><b>🇬🇧 &nbsp;English</b></summary>
@@ -119,6 +136,10 @@ MIT · See [LICENSE](./LICENSE)
 
 </details>
 
+</div>
+
+<div id="chinese">
+
 <details>
 <summary><b>🇨🇳 &nbsp;中文</b></summary>
 
@@ -223,6 +244,8 @@ hermes-xiaohongshu-workflow/
 MIT · 详见 [LICENSE](./LICENSE)
 
 </details>
+
+</div>
 
 <br>
 
