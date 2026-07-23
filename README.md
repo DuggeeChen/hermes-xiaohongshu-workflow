@@ -181,7 +181,7 @@ cp -r skills/* ~/AppData/Local/hermes/skills/productivity/
 
 | 项目 | 说明 |
 |------|------|
-| **触发词** | 「写一篇小红书」「小红书选题」「内容工作流」「新建选题」 |
+| **触发** | 用户明确要开始写某条选题时；不触发：讨论选题方向、评估角度、询问策略 |
 | **输入** | 选题 + 内容类型（干货教程/经验分享/产品种草/观点讨论/生活记录） |
 | **输出** | 完整笔记：标题（≤20 字）、正文（≤1000 字）、互动引导、标签、话题标签 |
 | **质量门** | 6 项写入前复查：标题字数、正文字数、无捏造数据、无伪造经历、无政策断言、标签匹配 |
@@ -191,7 +191,7 @@ cp -r skills/* ~/AppData/Local/hermes/skills/productivity/
 
 | 项目 | 说明 |
 |------|------|
-| **触发词** | 「完成待发布」「配图」「出图」 |
+| **触发** | 用户明确要为已写好正文的记录做配图时；不触发：讨论风格、评估已有配图、问账号视觉策略 |
 | **输入** | Notion 中「待配图」状态的笔记（自动取最新） |
 | **输出** | Session Prompt + 逐页 Page Prompts，自适应视觉方向 |
 | **模式** | 视觉方向由内容决定，不预设账号配色或固定风格 |
@@ -373,7 +373,7 @@ The pipeline stops at **"待发布 (Ready to Publish)"** — image plans are wri
 
 | Item | Description |
 |------|-------------|
-| **Triggers** | "Write a Xiaohongshu post", "New topic", "Content workflow" |
+| **Triggers** | User explicitly wants to draft a confirmed topic; does NOT trigger during topic discussion, angle evaluation, or strategy questions |
 | **Input** | Topic + content type (tutorial / experience / recommendation / opinion / lifestyle) |
 | **Output** | Full post: title (≤20 chars), body (≤1000 chars), CTA, tags, hashtags |
 | **Quality Gates** | 6-item pre-write review: title length, body length, no fabricated data, no fake experiences, no policy claims, tag validation |
@@ -383,7 +383,7 @@ The pipeline stops at **"待发布 (Ready to Publish)"** — image plans are wri
 
 | Item | Description |
 |------|-------------|
-| **Triggers** | "Finish ready to publish", "Image plan", "Generate images" |
+| **Triggers** | User explicitly wants image plans for a post with completed body text; does NOT trigger during style discussion, visual strategy talk, or evaluating existing images |
 | **Input** | Post with status 待配图 in Notion (auto-picks latest) |
 | **Output** | Multi-image layout: per-page role, copy, composition, AI generation prompt |
 | **Modes** | Visual direction is adaptive and content-driven — no preset account color palettes or fixed styles |

@@ -87,7 +87,7 @@ Given a **topic** + **content type** (one of: `干货教程` / `经验分享` / 
 |---|-------|-----|
 | 1 | Title ≤ 20 characters | Count every character (Chinese, English, digits, punctuation — all count as 1) |
 | 2 | Body ≤ 1000 characters | Count total characters |
-| 3 | No fabricated data | Scan for `\d+%`, `\d+ 万` patterns; ask "does this have a source?" |
+| 3 | No fabricated data | Scan for all concrete numbers (percentages, amounts, counts, durations). Each must either (a) cite a verifiable source, or (b) be rewritten as a vague expression. Numbers fitting neither → delete. |
 | 4 | No fake personal experience | Scan for first-person + specific event combos |
 | 5 | No platform policy claims | Scan for "小红书官方", "根据政策", "新规" |
 | 6 | Tags match existing options | Cross-check against Notion database schema |
