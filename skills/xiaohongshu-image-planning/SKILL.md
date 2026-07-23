@@ -1,8 +1,11 @@
 ---
 name: xiaohongshu-image-planning
 description: |
-  EN: Xiaohongshu (RED) image planning — reads a post from Notion, analyzes content structure, plans multi-image layouts (flexible count, content-driven), independently designs adaptive visual direction (any style — photography/illustration/collage/editorial/conceptual/mixed), generates a Session Prompt (sent once) + lean per-page Page Prompts for AI image tools like ChatGPT Images 2.0, writes the full plan to Notion's 配图方案 field. Does NOT advance status or generate actual images. Internal planning is minimal and focused; Session Prompt sets global rules; Page Prompts are page-specific; ChatGPT gets ample but bounded creative freedom.
-  CN: 小红书多图配图方案生成器：读取 Notion 内容记录，生成视觉策划和 AI 生图提示词。职责：读取 Notion → 分析内容 → 规划图片结构 → Prompt 编译 → 写入「配图方案」。不修改状态字段。内部只规划必要内容，Session Prompt 管全局，Page Prompt 管当前页面，ChatGPT 获得充分但有边界的视觉创作自由。不负责重写正文、修改标题、生成/上传图片、发布。
+  小红书配图方案：读取 Notion 中已写好正文的记录，分析内容结构，规划整组配图，输出可直接交给 ChatGPT 的生图提示词（Session Prompt + 逐页 Page Prompts），写入 Notion「配图方案」字段。
+
+  当用户明确要为某条已写好正文的记录做配图时使用——包括直接指定选题/标题，或要求为最新「待配图」记录生成配图方案。
+
+  以下情况不使用：用户在讨论配图风格或视觉方向、评估已有配图好不好、询问账号视觉策略、或修改本 skill 本身——这些阶段没有明确的出图任务，不应读取或写入任何记录。
 version: 4.0.1
 metadata:
   hermes:
@@ -10,59 +13,23 @@ metadata:
     related_skills: [xiaohongshu-content-production, notion]
 ---
 
-<!--
-  ═══════════════════════════════════════════════════════
-  ENGLISH SUMMARY
-  ═══════════════════════════════════════════════════════
-  Role in pipeline: Stage 3 of 3 — reads a post from Notion
-  (status=待配图), analyzes its content, plans a multi-image
-  layout, and outputs two-layer prompts for ChatGPT:
-
-    • Session Prompt — sent once, sets global rules, visual
-      direction, constraint priorities, creative mandate
-    • Page Prompts — one per page, lean, only page-specific info
-
-  Key v4.0.1 changes from v2.2.0:
-    • Visual direction is now ADAPTIVE (content-driven), not
-      preset by 3 account pillars with fixed color palettes
-    • No forced page archetypes, density modes, or per-page
-      differentiation requirements
-    • Quality check merged into single pass (5 items)
-    • Prompt compilation simplified (4 steps vs 8)
-    • Constraint priority simplified (4 tiers vs 7)
-    • Page Prompts are ~40-50% shorter (no repeated global rules)
-    • Output is lean: Session Prompt + Page Prompts + one-liner
-      usage instruction — no static templates, no fix commands
-    • Status is NOT advanced (stays as-is after writing 配图方案)
-
-  Quality gates: 5-item single-pass check after compilation.
-  Hard constraints: specified Chinese text must be verbatim;
-  no fabricated facts/experiences/data.
-
-  ⚠️  This is a Hermes Agent SKILL.md — the Chinese text
-     below is the actual runtime prompt. The English here
-     is supplementary documentation.
-  ═══════════════════════════════════════════════════════
--->
-
-# 小红书多图配图方案 <!-- EN: Xiaohongshu Multi-Image Planning -->
+# 小红书多图配图方案
 
 > 内部只规划必要内容，Session Prompt 管全局，Page Prompt 管当前页面，ChatGPT 获得充分但有边界的视觉创作自由。
-> <!-- EN: Minimal internal planning. Session Prompt = global rules. Page Prompts = page-specific only. ChatGPT gets ample but bounded creative freedom. -->
 
-## 概述 <!-- EN: Overview -->
+## 概述
 
 这个 Skill 的职责是：读取笔记正文 → 分析内容 → 规划整组配图 → 输出可直接交给 ChatGPT 的生图提示词。
 
 核心设计原则：**Agent 内部只规划必要内容。Session Prompt 管全局规则，Page Prompt 只负责当前页面。ChatGPT 获得充分但有边界的视觉创作自由。** 内部规则可以复杂，最终 Prompt 必须清楚、轻盈、有优先级、有创作授权。
 
-## 触发条件 <!-- EN: Trigger Conditions -->
+## 触发条件
 
 用户提供以下之一，否则默认取最新「待配图」记录：
 - **选题**（`选题` 字段值）
 - **标题**（`标题` 字段值）
 
-## 执行流程 <!-- EN: Execution Flow -->
+## 执行流程
 
 ### Step 1：定位记录
 
@@ -75,6 +42,8 @@ notion_fetch(id="<database_id>")
 ```
 
 按选题或标题查询，或取最新待配图：
+
+以下查询通过 notion_query_data_sources 执行（该工具接受 SQL 语法）。不要用 curl 直接调 REST API 的 /data_sources/{id}/query 端点——那个端点不接受 SQL，会报 body.query should be not present。
 
 ```sql
 SELECT * FROM "collection://<data_source_id>"
@@ -89,6 +58,8 @@ LIMIT 1
 
 未找到 → 提示并停止。
 
+若按用户指定的选题/标题找到了记录，但状态不是「待配图」：停止，告知用户当前状态值，询问是否确认继续。不要自行判断"应该也可以做"。
+
 ### Step 2：提取内容
 
 读取字段及用途：
@@ -99,9 +70,8 @@ LIMIT 1
 | `标题` | 理解封面主题 |
 | `正文` | 拆分多图内容的核心依据 |
 | `内容类型` | 判断表达方式 |
-| `封面提示词` | 仅作封面视觉方向参考，不要求沿用，不限制后续页面创意 |
 
-### Step 3：内容分析（内部规划）<!-- EN: Content Analysis -->
+### Step 3：内容分析（内部规划）
 
 分析正文的核心命题和读者目标反应。填写以下内部规划字段：
 
@@ -109,14 +79,14 @@ LIMIT 1
 planning:
   core_proposition:          # 这篇笔记唯一的核心命题
   desired_reader_response:   # 读者看完整组图片后，应理解、感受或采取什么行动
+
 ```
 
 - `core_proposition` 和 `desired_reader_response` 必填
 - 不要求填写固定情绪曲线；教程、清单和方法类内容可以使用认知顺序
-
 完成标准：能用一个完整的句子说出这篇笔记的核心命题和读者看完后应产生什么反应。
 
-### Step 4：规划图片结构 <!-- EN: Image Structure Planning -->
+### Step 4：规划图片结构
 
 基本规则：
 
@@ -144,7 +114,7 @@ pages:
 - `special_constraint` 默认为空，不要为了完整而填写
 - `exact_text` 可以为空，不要为了填写字段而增加文字
 
-### Step 5：自适应视觉方向 <!-- EN: Adaptive Visual Direction -->
+### Step 5：自适应视觉方向
 
 Agent 应根据当前笔记的具体内容、语气、主题、信息结构和叙事目标，为这组图片独立规划最合适的视觉方向。
 
@@ -171,8 +141,6 @@ Agent 可以自主决定：
 4. 是否具有整套视觉作品的完成度
 5. 是否给 ChatGPT 留出真实的创作空间
 
-如果数据库中的「封面提示词」具有参考价值，可以吸收其主题、氛围或视觉意图，但不得机械复制，也不得把它作为后续所有页面的固定模板。
-
 **跨页一致性：**
 
 视觉方向可以自由选择，但同一组图片一旦确定视觉系统，后续页面必须保持系列一致性。
@@ -193,7 +161,7 @@ global_visual:
 
 > Agent 根据当前内容提出开放的视觉方向，ChatGPT 在不改变核心信息和指定文字的前提下，自主优化并完成视觉创作。风格不由预设账号模板决定，但整套作品必须自洽。
 
-### Step 6：Prompt 编译 <!-- EN: Prompt Compilation -->
+### Step 6：Prompt 编译
 
 在生成最终提示词前，执行四步编译：
 
@@ -209,7 +177,7 @@ global_visual:
 3. 整组视觉一致且手机端可读
 4. 创意、审美和装饰细节
 
-### Step 7：质量检查 <!-- EN: Quality Check -->
+### Step 7：质量检查
 
 在 Prompt 编译之后、写入 Notion 之前，执行一次检查，只保留以下五项：
 
@@ -229,7 +197,7 @@ global_visual:
 
 不要输出打勾过程，不需要生成评分表。
 
-### Step 8：组装最终输出 <!-- EN: Assemble Final Output -->
+### Step 8：组装最终输出
 
 最终输出只包含三部分：
 
@@ -259,11 +227,12 @@ global_visual:
 
 除非用户明确要求，不添加其他说明、分析表格或修正模板。
 
-#### 整套启动指令（Session Prompt）<!-- EN: Session Prompt -->
+#### 整套启动指令（Session Prompt）
 
 只需发送一次。包含：
 
 - 整组主题、图片数量
+- 图片比例为 3:4 竖版（小红书信息流竖版展示）
 - 核心命题
 - 读者看完后的目标反应
 - 页面序列概览
@@ -306,7 +275,7 @@ global_visual:
 
 > 除明确标注为必须的内容外，其余描述均为创作方向。请根据当前主题主动选择最合适的视觉语言、构图、镜头、材质、色彩、隐喻和空间关系，不必沿用固定模板。可以优化原始构想，但不得改变核心信息和指定文字。
 
-#### 逐页生成指令（Page Prompt）<!-- EN: Page Prompt -->
+#### 逐页生成指令（Page Prompt）
 
 每页只输出当前页面新增的信息，不重复 Session Prompt 已建立的规则。
 
@@ -335,7 +304,7 @@ global_visual:
 
 不要重复 Session Prompt 中的全局内容，包括：3:4 竖版、全局视觉系统、约束优先级、通用禁止事项、完整创作授权、"每次只生成一张"、"不生成拼图"、通用文字规则。
 
-### Step 9：写入 Notion <!-- EN: Write to Notion -->
+### Step 9：写入 Notion
 
 汇报完方案后直接写入 `配图方案` 字段，不需要等用户确认。状态字段保持不变。
 
@@ -351,7 +320,7 @@ global_visual:
 
 写入后简短确认。
 
-## 视觉描述方式指南 <!-- EN: Visual Description Guide -->
+## 视觉描述方式指南
 
 **优先使用：** 视觉母题、阅读顺序、情绪变化、信息关系、画面张力、主次层级、空间节奏、视觉隐喻、前后页关系
 
@@ -359,7 +328,7 @@ global_visual:
 
 只有当具体位置是信息表达必需条件时，才指定位置。
 
-## 错误处理 <!-- EN: Error Handling -->
+## 错误处理
 
 | 错误 | 处理 |
 |------|------|
@@ -370,11 +339,13 @@ global_visual:
 | 字段名不匹配 | 记录差异，停止 |
 | Notion 写入失败 | 告知原因，已输出方案文本仍可用 |
 
-## 事实底线 <!-- EN: Fact Floor -->
+## 事实底线
 
 禁止在画面描述中编造正文不存在的经历、数据或效果。信息不足时用图形化表达或提出简短补充问题。
 
-## 边界 <!-- EN: Boundaries -->
+## 边界
+
+上游是内容生产 skill（xiaohongshu-content-production），它已将记录状态置为「待配图」，本 skill 从该状态接手。发布、数据回填交由再下游处理。
 
 **负责：**
 - 内容分析
@@ -392,13 +363,13 @@ global_visual:
 - 重写正文
 - 修改标题
 
-## 依赖 <!-- EN: Dependencies -->
+## 依赖
 
 - `notion` MCP（notion_search / notion_fetch / notion_query_data_sources / notion_update_page）
 
-## 附录 <!-- EN: Appendix -->
+## 附录
 
-### 页面原型库（可选参考）<!-- EN: Page Archetypes (Optional Reference) -->
+### 页面原型库（可选参考）
 
 以下原型仅在 Agent 没有思路时作为构图语法参考，不是执行步骤，也不是必填字段。不得原样输出给 ChatGPT，不得成为固定模板。
 
@@ -415,7 +386,7 @@ global_visual:
 | 总结收束 | 结尾升华 | 情绪收束+行动暗示 |
 | 互动结尾 | 引导互动 | 轻松，有参与感 |
 
-### 通用修正指令 <!-- EN: General Fix Commands -->
+### 通用修正指令
 
 仅在用户明确要求修图指令时输出，不默认写入每篇配图方案。
 
