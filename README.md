@@ -55,6 +55,16 @@
 
 <br>
 
+### 👥 适合谁用
+
+| 人群 | 场景 |
+|------|------|
+| 小红书创作者 | 想保持内容质量又不想每次都从零开始 |
+| 内容团队 | 需要可复现的编辑流程，新人上手快 |
+| AI Agent 开发者 | 想参考生产级 Skill 的写法和质量门控设计 |
+
+<br>
+
 ### 🏗️ 架构
 
 ```
@@ -155,6 +165,40 @@ cp -r skills/* ~/AppData/Local/hermes/skills/productivity/
 
 <br>
 
+### 📚 每个 Skill 详解
+
+#### `topic-research`
+
+| 项目 | 说明 |
+|------|------|
+| **触发词** | 「帮我探索选题」「找一下方向」「深度研究」 |
+| **输入** | 一个主题方向（如「AI 工具」「效率提升」） |
+| **输出** | 近期话题 + 常青选题，含推荐理由、可信度、来源链接 |
+| **模式** | 默认轻量探索；说「深度研究」触发严格核验模式 |
+| **写 Notion?** | ❌ 只读，不写入数据库 |
+
+#### `content-production`
+
+| 项目 | 说明 |
+|------|------|
+| **触发词** | 「写一篇小红书」「小红书选题」「内容工作流」「新建选题」 |
+| **输入** | 选题 + 内容类型（干货教程/经验分享/产品种草/观点讨论/生活记录） |
+| **输出** | 完整笔记：标题（≤20 字）、正文（≤1000 字）、互动引导、标签、话题标签 |
+| **质量门** | 6 项写入前复查：标题字数、正文字数、无捏造数据、无伪造经历、无政策断言、标签匹配 |
+| **写 Notion?** | ✅ 新建记录，状态设为「待配图」 |
+
+#### `image-planning`
+
+| 项目 | 说明 |
+|------|------|
+| **触发词** | 「完成待发布」「配图」「出图」 |
+| **输入** | Notion 中「待配图」状态的笔记（自动取最新） |
+| **输出** | 多图布局方案：每页作用、展示文案、构图建议、AI 生图提示词 |
+| **模式** | A·氛围引导型（观点/情绪，留白大） vs B·信息结构型（干货/清单，编号+色块） |
+| **写 Notion?** | ✅ 写入「配图方案」字段，状态设为「待发布」 |
+
+<br>
+
 ### 📂 仓库结构
 
 ```
@@ -200,6 +244,16 @@ Writing a good Xiaohongshu post is a **multi-stage pipeline**, not a single "gen
 | 🎨 **Image Planning** | Multi-image layouts, visual style, AI prompts | 4-item anti-laziness quality audit |
 
 Most AI tools stop at "generate a post." This workflow **connects all three stages** through a Notion database with built-in quality gates.
+
+<br>
+
+### 👥 Who Is This For
+
+| Audience | Use Case |
+|----------|----------|
+| Xiaohongshu creators | Want consistent quality without starting from scratch every time |
+| Content teams | Need a repeatable editorial pipeline that new members can pick up quickly |
+| AI Agent developers | Want a production-grade Skill example with quality gates and error handling |
 
 <br>
 
@@ -300,6 +354,40 @@ Each post moves through four states in Notion:
 - Fill post-publication analytics
 
 The pipeline stops at **"待发布 (Ready to Publish)"** — manual final review is by design.
+
+<br>
+
+### 📚 Skill Breakdown
+
+#### `topic-research`
+
+| Item | Description |
+|------|-------------|
+| **Triggers** | "Explore topics for me", "Find directions", "Deep research" |
+| **Input** | A topic direction (e.g., "AI tools", "productivity hacks") |
+| **Output** | Trending + evergreen topics with rationale, credibility, source links |
+| **Modes** | Lightweight by default; "deep research" triggers strict verification |
+| **Writes Notion?** | ❌ Read-only |
+
+#### `content-production`
+
+| Item | Description |
+|------|-------------|
+| **Triggers** | "Write a Xiaohongshu post", "New topic", "Content workflow" |
+| **Input** | Topic + content type (tutorial / experience / recommendation / opinion / lifestyle) |
+| **Output** | Full post: title (≤20 chars), body (≤1000 chars), CTA, tags, hashtags |
+| **Quality Gates** | 6-item pre-write review: title length, body length, no fabricated data, no fake experiences, no policy claims, tag validation |
+| **Writes Notion?** | ✅ Creates record, sets status to 待配图 |
+
+#### `image-planning`
+
+| Item | Description |
+|------|-------------|
+| **Triggers** | "Finish ready to publish", "Image plan", "Generate images" |
+| **Input** | Post with status 待配图 in Notion (auto-picks latest) |
+| **Output** | Multi-image layout: per-page role, copy, composition, AI generation prompt |
+| **Modes** | A: Atmosphere-driven (opinion/emotion, heavy whitespace) vs B: Info-dense (tutorial/checklist, numbered + color blocks) |
+| **Writes Notion?** | ✅ Writes to 配图方案 field, sets status to 待发布 |
 
 <br>
 
