@@ -1,12 +1,12 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Hermes-Agent-6C5CE7?style=for-the-badge&logo=robotframework&logoColor=white">
-  <img src="https://img.shields.io/badge/Platform-Xiaohongshu-FF2442?style=for-the-badge">
+  <img src="https://img.shields.io/badge/Platform-小红书-FF2442?style=for-the-badge">
   <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge">
 </p>
 
-<h1 align="center">📕 Hermes Xiaohongshu Workflow</h1>
+<h1 align="center">📕 Hermes 小红书 Workflow</h1>
 <p align="center">
-  <i>AI-powered end-to-end content pipeline for Xiaohongshu (RED)<br>
+  <i>AI-powered end-to-end content pipeline for Xiaohongshu (小红书 / RED)<br>
   AI 驱动的小红书内容生产线 — 从灵感到待发布，全流程自动化</i>
 </p>
 
