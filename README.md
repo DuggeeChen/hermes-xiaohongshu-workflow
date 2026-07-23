@@ -15,12 +15,12 @@
 <table align="center"><tr>
 <td align="center" width="260">
 
-[**🇬🇧 &nbsp;English**](#english)
+[<big>**🇨🇳 &nbsp;中文**</big>](#chinese)
 
 </td>
 <td align="center" width="260">
 
-[**🇨🇳 &nbsp;中文**](#chinese)
+[<big>**🇬🇧 &nbsp;English**</big>](#english)
 
 </td>
 </tr></table>
@@ -29,118 +29,9 @@
 
 ---
 
-<div id="english">
-
-<details open>
-<summary><b>🇬🇧 &nbsp;English</b></summary>
-
-<br>
-
-> **From a rough topic idea to a publish-ready Xiaohongshu post with image briefs — all driven by an AI agent that enforces quality, not just speed.**
-
-<br>
-
-### 🎯 The Problem
-
-Writing a good Xiaohongshu post is a **multi-stage pipeline**, not a single "generate" button:
-
-| Stage | What Happens | Quality Gate |
-|-------|-------------|--------------|
-| 🔍 **Research** | Is this topic worth writing? What angles are trending? | Multi-source verification for sensitive claims |
-| ✍️ **Drafting** | Title ≤20 chars, body ≤1000 chars, CTAs, tags | 6-item pre-write review checklist |
-| 🎨 **Image Planning** | Multi-image layouts, visual style, AI prompts | 4-item anti-laziness quality audit |
-
-Most AI tools stop at "generate a post." This workflow **connects all three stages** through a Notion database with built-in quality gates.
-
-<br>
-
-### 🏗️ Architecture
-
-```
-  🔍 TOPIC RESEARCH          ✍️ CONTENT PRODUCTION        🎨 IMAGE PLANNING
-  ┌──────────────────┐       ┌──────────────────────┐       ┌──────────────────┐
-  │                  │       │                      │       │                  │
-  │  Web search      │       │  Notion dedup        │       │  Read post       │
-  │  Trend analysis  │  ───→ │  Fact-checking       │  ───→ │  Plan layouts    │
-  │  Angle discovery │       │  Title + body + tags │       │  AI prompts      │
-  │                  │       │                      │       │                  │
-  │  Read-only       │       │  灵感池  →  待配图     │       │  待配图  →  待发布  │
-  └──────────────────┘       └──────────────────────┘       └──────────────────┘
-```
-
-<br>
-
-### ⚡ Quick Start
-
-```bash
-git clone https://github.com/DuggeeChen/hermes-xiaohongshu-workflow.git
-cp -r skills/* ~/AppData/Local/hermes/skills/productivity/
-# Configure Notion connection in Hermes
-```
-
-```bash
-"帮我探索一下 AI 工具 方向的小红书选题"            # → Topic research
-"写一篇小红书：干货教程，《用 AI 写周报的 3 个坑》"  # → Content drafting
-"完成待发布"                                        # → Image planning
-```
-
-<br>
-
-### 🧩 Three Skills
-
-| Skill | Role | Input → Output | Writes to Notion? |
-|-------|------|----------------|-------------------|
-| `topic-research` | Discover angles | Direction → Curated topic list + credibility + sources | No |
-| `content-production` | Draft posts | Topic + type → Full post (title, body, tags, CTAs) | ✅ |
-| `image-planning` | Plan visuals | Post content → Multi-image layout + AI prompts | ✅ |
-
-<br>
-
-### 💡 Design Philosophy
-
-| 🛡️ | **Gatekeeper, not mold** — Enforces what *not* to do: no fake data, no template CTAs, no overwriting existing content |
-|🎨| **Freedom within guardrails** — Agent decides style, structure, pacing within hard boundaries |
-| 🔍 | **Trust but verify** — Sensitive claims require ≥2 independent sources before proceeding |
-
-<br>
-
-### 🚫 What These Skills Do NOT Do
-
-- Generate actual images (→ output prompts for ChatGPT Images 2.0, Midjourney, etc.)
-- Upload or publish to Xiaohongshu
-- Scrape platform data
-- Fill post-publication analytics
-
-The pipeline stops at **"待发布 (Ready to Publish)"** — manual final review is by design.
-
-<br>
-
-### 📂 Structure
-
-```
-hermes-xiaohongshu-workflow/
-├── README.md
-├── WORKFLOW.md              ← Deep-dive pipeline docs (bilingual)
-├── LICENSE                  ← MIT
-└── skills/
-    ├── xiaohongshu-topic-research/SKILL.md
-    ├── xiaohongshu-content-production/SKILL.md
-    └── xiaohongshu-image-planning/SKILL.md
-```
-
-<br>
-
-### 📄 License
-
-MIT · See [LICENSE](./LICENSE)
-
-</details>
-
-</div>
-
 <div id="chinese">
 
-<details>
+<details open>
 <summary><b>🇨🇳 &nbsp;中文</b></summary>
 
 <br>
@@ -242,6 +133,115 @@ hermes-xiaohongshu-workflow/
 ### 📄 许可
 
 MIT · 详见 [LICENSE](./LICENSE)
+
+</details>
+
+</div>
+
+<div id="english">
+
+<details>
+<summary><b>🇬🇧 &nbsp;English</b></summary>
+
+<br>
+
+> **From a rough topic idea to a publish-ready Xiaohongshu post with image briefs — all driven by an AI agent that enforces quality, not just speed.**
+
+<br>
+
+### 🎯 The Problem
+
+Writing a good Xiaohongshu post is a **multi-stage pipeline**, not a single "generate" button:
+
+| Stage | What Happens | Quality Gate |
+|-------|-------------|--------------|
+| 🔍 **Research** | Is this topic worth writing? What angles are trending? | Multi-source verification for sensitive claims |
+| ✍️ **Drafting** | Title ≤20 chars, body ≤1000 chars, CTAs, tags | 6-item pre-write review checklist |
+| 🎨 **Image Planning** | Multi-image layouts, visual style, AI prompts | 4-item anti-laziness quality audit |
+
+Most AI tools stop at "generate a post." This workflow **connects all three stages** through a Notion database with built-in quality gates.
+
+<br>
+
+### 🏗️ Architecture
+
+```
+  🔍 TOPIC RESEARCH          ✍️ CONTENT PRODUCTION        🎨 IMAGE PLANNING
+  ┌──────────────────┐       ┌──────────────────────┐       ┌──────────────────┐
+  │                  │       │                      │       │                  │
+  │  Web search      │       │  Notion dedup        │       │  Read post       │
+  │  Trend analysis  │  ───→ │  Fact-checking       │  ───→ │  Plan layouts    │
+  │  Angle discovery │       │  Title + body + tags │       │  AI prompts      │
+  │                  │       │                      │       │                  │
+  │  Read-only       │       │  灵感池  →  待配图     │       │  待配图  →  待发布  │
+  └──────────────────┘       └──────────────────────┘       └──────────────────┘
+```
+
+<br>
+
+### ⚡ Quick Start
+
+```bash
+git clone https://github.com/DuggeeChen/hermes-xiaohongshu-workflow.git
+cp -r skills/* ~/AppData/Local/hermes/skills/productivity/
+# Configure Notion connection in Hermes
+```
+
+```bash
+"帮我探索一下 AI 工具 方向的小红书选题"            # → Topic research
+"写一篇小红书：干货教程，《用 AI 写周报的 3 个坑》"  # → Content drafting
+"完成待发布"                                        # → Image planning
+```
+
+<br>
+
+### 🧩 Three Skills
+
+| Skill | Role | Input → Output | Writes to Notion? |
+|-------|------|----------------|-------------------|
+| `topic-research` | Discover angles | Direction → Curated topic list + credibility + sources | No |
+| `content-production` | Draft posts | Topic + type → Full post (title, body, tags, CTAs) | ✅ |
+| `image-planning` | Plan visuals | Post content → Multi-image layout + AI prompts | ✅ |
+
+<br>
+
+### 💡 Design Philosophy
+
+| 🛡️ | **Gatekeeper, not mold** — Enforces what *not* to do: no fake data, no template CTAs, no overwriting existing content |
+|🎨| **Freedom within guardrails** — Agent decides style, structure, pacing within hard boundaries |
+| 🔍 | **Trust but verify** — Sensitive claims require ≥2 independent sources before proceeding |
+
+<br>
+
+### 🚫 What These Skills Do NOT Do
+
+- Generate actual images (→ output prompts for ChatGPT Images 2.0, Midjourney, etc.)
+- Upload or publish to Xiaohongshu
+- Scrape platform data
+- Fill post-publication analytics
+
+The pipeline stops at **"待发布 (Ready to Publish)"** — manual final review is by design.
+
+<br>
+
+### 📂 Structure
+
+```
+hermes-xiaohongshu-workflow/
+├── README.md
+├── WORKFLOW.md              ← Deep-dive pipeline docs (bilingual)
+├── LICENSE                  ← MIT
+└── skills/
+    ├── xiaohongshu-topic-research/SKILL.md
+    ├── xiaohongshu-content-production/SKILL.md
+    └── xiaohongshu-image-planning/SKILL.md
+```
+
+<br>
+
+### 📄 License
+
+MIT · See [LICENSE](./LICENSE)
 
 </details>
 
